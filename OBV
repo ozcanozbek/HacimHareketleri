@@ -1,5 +1,5 @@
 //@version=5
-indicator(title="On Balance Volume", shorttitle="myOBV", format=format.volume, timeframe="", timeframe_gaps=true)
+indicator(title="On Balance Volume V1.0.1", shorttitle="xOBV", format=format.volume, timeframe="", timeframe_gaps=true)
 var cumVol = 0.
 cumVol += nz(volume)
 if barstate.islast and cumVol == 0
