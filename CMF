@@ -1,5 +1,5 @@
 //@version=5
-indicator(title="Chaikin Money Flow", shorttitle="myCMF", format=format.price, precision=2, timeframe="", timeframe_gaps=true)
+indicator(title="Chaikin Money Flow V1.01", shorttitle="xCMF", format=format.price, precision=2, timeframe="", timeframe_gaps=true)
 var cumVol = 0.
 cumVol += nz(volume)
 if barstate.islast and cumVol == 0
@@ -9,11 +9,21 @@ ad = close==high and close==low or high==low ? 0 : ((2*close-low-high)/(high-low
 mf = math.sum(ad, length) / math.sum(volume, length)
 plot(mf, color=color.orange, title="MF",linewidth=3)
 
+ustCizgi = input.float(0.1, "Üst Değer", minval=-0.0, maxval=0.4, step=0.01)
+altCizgi = input.float(-0.05, "Alt Değer", minval=-0.4, maxval=0.0, step=0.01)
 
-p0=hline(0.4, color=color.new(color.lime,100), title="Tepe", linewidth=2, linestyle = hline.style_solid)
-p1=hline(0.1, color=color.new(color.lime,75), title="Üst", linewidth=2, linestyle = hline.style_solid)
+acBolgeIsaretleri = input(defval = false, title = 'Bölge İşaretleri Gözüksün mü?', group="Bölge İşaretleri")   
+
+
+bolgeIsareti = mf > ustCizgi ? 1 : mf < altCizgi ? -1 : 0
+plotshape(mf > ustCizgi and acBolgeIsaretleri ? mf > ustCizgi : na , title ='CMF Bölge İşaretleri', text='', style=shape.triangleup, location=location.top, color=color.new(color.lime, 0), offset=0, size=size.tiny)
+plotshape(mf < altCizgi and acBolgeIsaretleri ? mf < altCizgi: na , title ='CMF Bölge İşaretleri', text='', style=shape.triangledown, location=location.top, color=color.new(color.red, 0), offset=0, size=size.tiny)
+
+
+p0=hline(0.3, color=color.new(color.lime,100), title="Tepe", linewidth=2, linestyle = hline.style_solid)
+p1=hline(ustCizgi, color=color.new(color.lime,75), title="Üst", linewidth=2, linestyle = hline.style_solid)
 hline(0, color=color.new(color.white,75), title="Orta", linewidth=2, linestyle = hline.style_solid)
-p2=hline(-0.05, color=color.new(color.red,75), title="Alt", linewidth=2, linestyle = hline.style_solid )
+p2=hline(altCizgi, color=color.new(color.red,75), title="Alt", linewidth=2, linestyle = hline.style_solid )
 p3=hline(-0.4, color=color.new(color.red,100), title="Dip", linewidth=2, linestyle = hline.style_solid)
 
 fill(p0, p1 , title = 'Üst Bölge', color = color.lime, fillgaps = true, transp=50)
