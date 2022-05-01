@@ -1,5 +1,5 @@
 //@version=5
-indicator(title='MyVolume V4.1', shorttitle='Hacim Hareketleri', format=format.volume, timeframe="")
+indicator(title='MyVolume V5.0.1', shorttitle='xHacim', format=format.volume, timeframe="")
 
 myOpen = request.security(syminfo.tickerid, timeframe.period, open)
 myClose = request.security(syminfo.tickerid, timeframe.period, close)
@@ -186,9 +186,9 @@ sart2 = (not sart3) and  (yon==1 and deger > 0) and ((yon[1]==0 and deger[1] >= 
 sartDemas = dema20 > dema20[1] // and close >= wma30 and ema9 >= wma30
 renkDema20 = sartDemas ? color.lime : color.red
 
-plotshape(sart1, text='1\ns', style=shape.square, location=location.top, color=color.new(renkDema20, 0), offset=0, size=size.auto)
-plotshape(sart2, text='2\ns', style=shape.square, location=location.top, color=color.new(renkDema20, 0), offset=0, size=size.auto)
-plotshape(sart3, text='3\ns', style=shape.square, location=location.top, color=color.new(renkDema20, 0), offset=0, size=size.auto)
+//plotshape(sart1, text='1\ns', style=shape.square, location=location.top, color=color.new(renkDema20, 0), offset=0, size=size.auto, title = 'Şart1')
+//plotshape(sart2, text='2\ns', style=shape.square, location=location.top, color=color.new(renkDema20, 0), offset=0, size=size.auto, title = 'Şart2')
+//plotshape(sart3, text='3\ns', style=shape.square, location=location.top, color=color.new(renkDema20, 0), offset=0, size=size.auto, title = 'Şart3')
 
 
 sartlar = sart1 or sart2 or sart3    
@@ -197,8 +197,8 @@ alertcondition(sart1, title='Sart 1 AL', message='Sart1 AL {{ticker}}, FİYAT={{
 alertcondition(sart1, title='Sart 2 AL', message='Sart2 AL {{ticker}}, FİYAT={{close}}')
 alertcondition(sart1, title='Sart 3 AL', message='Sart3 AL {{ticker}}, FİYAT={{close}}')
 
-plotshape(deger == 0 and yon ==0, text='', style=shape.circle, location=location.bottom, color=color.new(color.red, 50), offset=0, size=size.auto)
-plotshape(deger == 0 and yon ==1, text='', style=shape.circle, location=location.bottom, color=color.new(color.lime, 50), offset=0, size=size.auto)
+//plotshape(deger == 0 and yon ==0, text='', style=shape.circle, location=location.bottom, color=color.new(color.red, 50), offset=0, size=size.auto, title = 'Ort Satıcı')
+//plotshape(deger == 0 and yon ==1, text='', style=shape.circle, location=location.bottom, color=color.new(color.lime, 50), offset=0, size=size.auto, title = 'Ort Alıcı')
 
 
 
@@ -320,4 +320,64 @@ plotshape(deger == 4 and yon ==1, text='3+', style=shape.triangleup, location=lo
 //plot(5, title='2 Saat', color = peryodUyumu120==1 ? rengi120 : color.new(color.white, 70) , style=plot.style_circles, linewidth= 4, join=true)
 //plot(4, title='1 Gün', color = peryodUyumu1G==1 ? rengi1G : color.new(color.white, 70) , style=plot.style_circles, linewidth= 4 , join=true)
 //plot(3, title='1 Hafta', color = peryodUyumu1H==1 ? rengi1H : color.new(color.white, 70) , style=plot.style_circles, linewidth= 4, join=true)
+
+
+//OBV
+var cumVol = 0.
+cumVol += nz(volume)
+if barstate.islast and cumVol == 0
+    runtime.error("No volume is provided by the data vendor.")
+obvsrc = close
+
+acObvBolge = input(defval = false, title = 'OBV Bölgesi Gözüksün mü?', group="xOBV")   
+
+
+obv = ta.cum(math.sign(ta.change(obvsrc)) * volume)
+//p1Color = acObvBolge ? color.lime : na
+p1=plot(obv and acObvBolge ? obv : na, color=color.lime, title="OnBalanceVolume", linewidth=2)
+
+ma(source, length, type) =>
+    switch type
+        "SMA" => ta.sma(source, length)
+        "EMA" => ta.ema(source, length)
+        "SMMA (RMA)" => ta.rma(source, length)
+        "WMA" => ta.wma(source, length)
+        "VWMA" => ta.vwma(source, length)
+
+typeMA = input.string(title = "Method", defval = "SMA", options=["SMA", "EMA", "SMMA (RMA)", "WMA", "VWMA"], group="xOBV")
+smoothingLength = input.int(title = "Length", defval = 5, minval = 1, maxval = 100, group="xOBV")
+
+smoothingLine = ma(obv, smoothingLength, typeMA)
+//p2Color = acObvBolge ? color.red : na
+p2=plot(smoothingLine and acObvBolge ? smoothingLine : na , title="Smoothing Line", color=color.red, linewidth=2)
+
+
+
+myBoya1 = obv >= smoothingLine ? color.lime : color.red 
+myBoya = acObvBolge ? myBoya1 : na
+fill(p1, p2 , title = 'Bölge', color = myBoya, fillgaps = true, transp=0)
+
+//CMF
+var cmfVol = 0.
+cmfVol += nz(volume)
+if barstate.islast and cmfVol == 0
+    runtime.error("No volume is provided by the data vendor.")
+cmflength = input.int(20, minval=1, group="xCMF",title = 'CMF Uzunluk')
+ad = close==high and close==low or high==low ? 0 : ((2*close-low-high)/(high-low))*volume
+mf = math.sum(ad, cmflength) / math.sum(volume, cmflength)
+
+ustCizgi = input.float(0.1, "Üst Değer", minval=-0.0, maxval=0.4, step=0.01, group="xCMF")
+altCizgi = input.float(-0.05, "Alt Değer", minval=-0.4, maxval=0.0, step=0.01, group="xCMF")
+
+acBolgeIsaretleri = input(defval = false, title = 'Bölge İşaretleri Gözüksün mü?', group="xCMF")   
+
+
+bolgeIsareti = mf > ustCizgi ? 1 : mf < altCizgi ? -1 : 0
+plotshape(mf > ustCizgi and acBolgeIsaretleri ? mf > ustCizgi : na , title ='CMF Bölge İşaretleri', text='', style=shape.triangleup, location=location.top, color=color.new(color.lime, 0), offset=0, size=size.small)
+plotshape(mf < altCizgi and acBolgeIsaretleri ? mf < altCizgi: na , title ='CMF Bölge İşaretleri', text='', style=shape.triangledown, location=location.top, color=color.new(color.red, 0), offset=0, size=size.small)
+
+
+
+
+//BURADA BİTTİ
 
