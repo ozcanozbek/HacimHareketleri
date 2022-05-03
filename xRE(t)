@@ -1,0 +1,151 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © ozcanozbek
+
+//@version=5
+indicator(title = 'xRE(t) V1.1.01' , shorttitle='xRE(t)', overlay=true, timeframe="", timeframe_gaps=true)
+//, timeframe="", timeframe_gaps=true
+
+xMumKontrol(xMumTip)=>
+    string xMA = switch xMumTip
+        "1 Dakika" => "1"
+        "5 Dakika" => "5"
+        "15 Dakika" => "15"
+        "30 Dakika" => "30"
+        "2 Saat" => "120" 
+        "4 Saat" => "240" 
+        "1 Gün" => "D"
+        "1 Hafta" => "W"
+        "1 Ay" => "M"
+        => str.tostring(timeframe.period)
+    
+
+
+
+// RSI/EMA Genel
+acHepsiY = input(defval = false, title = 'Hepsi Yükseliş Renk İşaretleri Gösterilsin mi?', group="Rsi/Ema Genel Değerleri") 
+acHepsiD = input(defval = false, title = 'Hepsi Düşüş Renk İşaretleri Gösterilsin mi?', group="Rsi/Ema Genel Değerleri") 
+
+myRsiUzunluk = input.int(14, title='RSI Değeri', group="Rsi/Ema Genel Değerleri")
+myEmaUzunluk = input.int(12, title='Ema Değeri', group="Rsi/Ema Genel Değerleri")
+
+
+// R/E 1
+myRsi_1S_1 = ta.rsi(close,myRsiUzunluk)
+myEma_1S_1 = ta.ema(myRsi_1S_1, myEmaUzunluk)
+
+myRsi_1S = request.security(syminfo.tickerid, timeframe.period, myRsi_1S_1)
+myEma_1S = request.security(syminfo.tickerid, timeframe.period, myEma_1S_1)
+
+myH_1S = request.security(syminfo.tickerid, timeframe.period, high)
+myL_1S = request.security(syminfo.tickerid, timeframe.period, low)
+
+
+acRsiEmaLW_1S = input.int(defval = 4, title = 'Rsi/Ema Çizgisi Kalınlığı Sayısal Değeri', group="Rsi/Ema 1 Değerleri") 
+acRsiEma_1S = input(defval = true, title = 'Rsi/Ema Çizgisi Gösterilsin mi?', group="Rsi/Ema 1 Değerleri") 
+acREIsaretler_1S = input(defval = false, title = 'Renk İşaretleri Gösterilsin mi?', group="Rsi/Ema 1 Değerleri") 
+
+acRsiEmaAl_1S = input(defval = false, title = 'Kademeli DİP İşaretleri Gösterilsin mi?', group="Rsi/Ema 1 Değerleri") 
+acRsiEmaSat_1S = input(defval = false, title = 'Kademeli ZİRVE İşaretleri Gösterilsin mi?', group="Rsi/Ema 1 Değerleri") 
+
+myKoyuRenkY_1S = input.color(color.new(#00897B, 0)  , "Alım Bölgesinde (zirvede) Yükselirken", group="Rsi/Ema 1 Değerleri") 
+myAcikRenkY_1S = input.color(color.new(color.green, 0), "Satım Bölgesinden (dipte) Yükselirken", group="Rsi/Ema 1 Değerleri") 
+
+myAcikRenkD_1S = input.color(color.new(color.red, 70) , "Alım Bölgesinden (zirvede) Düşerken", group="Rsi/Ema 1 Değerleri") 
+myKoyuRenkD_1S = input.color(color.new(#880E4F, 0)  , "Satım Bölgesinde (dipte) Düşerken", group="Rsi/Ema 1 Değerleri") 
+
+myRsiColorY_1S = myRsi_1S <= 60 ? myAcikRenkY_1S : myKoyuRenkY_1S     
+myRsiColorD_1S = myRsi_1S <= 40 ? myKoyuRenkD_1S : myAcikRenkD_1S   
+myRsiColorTek_1S = myRsi_1S >= myEma_1S ? myRsiColorY_1S : myRsiColorD_1S
+myRsiEmaLine_1S = myRsi_1S >= myEma_1S ? myH_1S : myL_1S
+
+rsiSartAl_1S = (myRsiColorTek_1S[1]==myKoyuRenkD_1S) and (myRsiColorTek_1S == myAcikRenkD_1S or myRsiColorTek_1S == myAcikRenkY_1S or myRsiColorTek_1S == myKoyuRenkY_1S) 
+plotshape(rsiSartAl_1S and acRsiEmaAl_1S and acRsiEma_1S,title ='R/E 1 DİP' , style=shape.triangleup, location=location.belowbar, color=color.new(#00bcd4, 0), offset=0, size=size.normal)
+//alertcondition(rsiSartAl_1S, title="R/E 1 DİP", message='{{ticker}} R/E 1 Kademeli DİP fırsatı olabilir, FİYAT={{close}}')
+
+rsiSartSat_1S = (myRsiColorTek_1S[1]==myKoyuRenkY_1S) and (myRsiColorTek_1S == myAcikRenkD_1S) 
+plotshape(rsiSartSat_1S and acRsiEmaSat_1S and acRsiEma_1S,title ='R/E 1 ZİRVE', style=shape.triangledown, location=location.abovebar, color=color.new(#00bcd4, 0), offset=0, size=size.normal)
+//alertcondition(rsiSartSat_1S, title="R/E 1 ZİRVE", message='{{ticker}} R/E 1 Kademeli ZİRVE fırsatı olabilir, FİYAT={{close}}')
+
+
+//TimeFrame
+//string xReMum1 = input.timeframe(defval = "Grafik", title = "Rsi/Ema 1 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="Rsi/Ema 1 Değerleri")
+string xReMum2 = input.timeframe(defval = "Grafik", title = "Rsi/Ema 2 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="Rsi/Ema 2 Değerleri")
+string xReMum3 = input.timeframe(defval = "Grafik", title = "Rsi/Ema 3 Çalışma Mumu" ,options=["Grafik", "1 Dakika", "5 Dakika", "15 Dakika", "30 Dakika", "2 Saat", "4 Saat", "1 Gün", "1 Hafta", "1 Ay"] , group="Rsi/Ema 3 Değerleri")
+
+
+// R/E 2
+myRsi_2S_1 = ta.rsi(close,myRsiUzunluk)
+myEma_2S_1 = ta.ema(myRsi_2S_1, myEmaUzunluk)
+
+myRsi_2S = request.security(syminfo.tickerid, xMumKontrol(xReMum2), myRsi_2S_1)
+myEma_2S = request.security(syminfo.tickerid, xMumKontrol(xReMum2), myEma_2S_1)
+
+myH_2S = request.security(syminfo.tickerid, xMumKontrol(xReMum2), high)
+myL_2S = request.security(syminfo.tickerid, xMumKontrol(xReMum2), low)
+
+
+acRsiEmaLW_2S = input.int(defval = 4, title = 'Rsi/Ema Çizgisi Kalınlığı Sayısal Değeri', group="Rsi/Ema 2 Değerleri") 
+acRsiEma_2S = input(defval = true, title = 'Rsi/Ema Çizgisi Gösterilsin mi?', group="Rsi/Ema 2 Değerleri") 
+acREIsaretler_2S = input(defval = false, title = 'Renk İşaretleri Gösterilsin mi?', group="Rsi/Ema 2 Değerleri") 
+
+myKoyuRenkY_2S = input.color(color.new(#00897B, 0)  , "Alım Bölgesinde (zirvede) Yükselirken", group="Rsi/Ema 2 Değerleri") 
+myAcikRenkY_2S = input.color(color.new(color.green, 0), "Satım Bölgesinden (dipte) Yükselirken", group="Rsi/Ema 2 Değerleri") 
+
+myAcikRenkD_2S = input.color(color.new(color.red, 70) , "Alım Bölgesinden (zirvede) Düşerken", group="Rsi/Ema 2 Değerleri") 
+myKoyuRenkD_2S = input.color(color.new(#880E4F, 0)  , "Satım Bölgesinde (dipte) Düşerken", group="Rsi/Ema 2 Değerleri") 
+
+myRsiColorY_2S = myRsi_2S <= 60 ? myAcikRenkY_2S : myKoyuRenkY_2S     
+myRsiColorD_2S = myRsi_2S <= 40 ? myKoyuRenkD_2S : myAcikRenkD_2S   
+myRsiColorTek_2S = myRsi_2S >= myEma_2S ? myRsiColorY_2S : myRsiColorD_2S
+myRsiEmaLine_2S = myRsi_2S >= myEma_2S ? myH_2S : myL_2S
+
+
+// R/E 3
+myRsi_3S_1 = ta.rsi(close,myRsiUzunluk)
+myEma_3S_1 = ta.ema(myRsi_3S_1, myEmaUzunluk)
+
+myRsi_3S = request.security(syminfo.tickerid, xMumKontrol(xReMum3), myRsi_3S_1)
+myEma_3S = request.security(syminfo.tickerid, xMumKontrol(xReMum3), myEma_3S_1)
+
+myH_3S = request.security(syminfo.tickerid, xMumKontrol(xReMum3), high)
+myL_3S = request.security(syminfo.tickerid, xMumKontrol(xReMum3), low)
+
+
+acRsiEmaLW_3S = input.int(defval = 4, title = 'Rsi/Ema Çizgisi Kalınlığı Sayısal Değeri', group="Rsi/Ema 3 Değerleri") 
+acRsiEma_3S = input(defval = true, title = 'Rsi/Ema Çizgisi Gösterilsin mi?', group="Rsi/Ema 3 Değerleri") 
+acREIsaretler_3S = input(defval = false, title = 'Renk İşaretleri Gösterilsin mi?', group="Rsi/Ema 3 Değerleri") 
+
+myKoyuRenkY_3S = input.color(color.new(#00897B, 0)  , "Alım Bölgesinde (zirvede) Yükselirken", group="Rsi/Ema 3 Değerleri") 
+myAcikRenkY_3S = input.color(color.new(color.green, 0), "Satım Bölgesinden (dipte) Yükselirken", group="Rsi/Ema 3 Değerleri") 
+
+myAcikRenkD_3S = input.color(color.new(color.red, 70) , "Alım Bölgesinden (zirvede) Düşerken", group="Rsi/Ema 3 Değerleri") 
+myKoyuRenkD_3S = input.color(color.new(#880E4F, 0)  , "Satım Bölgesinde (dipte) Düşerken", group="Rsi/Ema 3 Değerleri") 
+
+myRsiColorY_3S = myRsi_3S <= 60 ? myAcikRenkY_3S : myKoyuRenkY_3S     
+myRsiColorD_3S = myRsi_3S <= 40 ? myKoyuRenkD_3S : myAcikRenkD_3S   
+myRsiColorTek_3S = myRsi_3S >= myEma_3S ? myRsiColorY_3S : myRsiColorD_3S
+myRsiEmaLine_3S = myRsi_3S >= myEma_3S ? myH_3S : myL_3S
+
+
+/////
+
+myREcizgim_3S = plot(acRsiEma_3S ? myRsi_3S >= myEma_3S ? myH_3S : myL_3S : na, color=myRsiColorTek_3S, linewidth=acRsiEmaLW_3S, title='R/E 3 Cizgisi')
+myREcizgim_2S = plot(acRsiEma_2S ? myRsi_2S >= myEma_2S ? myH_2S : myL_2S : na, color=myRsiColorTek_2S, linewidth=acRsiEmaLW_2S, title='R/E 2 Cizgisi')
+myREcizgim_1S = plot(acRsiEma_1S ? myRsi_1S >= myEma_1S ? myH_1S : myL_1S : na, color=myRsiColorTek_1S, linewidth=acRsiEmaLW_1S, title='R/E 1 Cizgisi')
+
+
+/////
+
+plotshape(acRsiEma_1S and acRsiEma_1S and acREIsaretler_1S ? acRsiEma_1S : na , title ='R/E 1 İşaret', text='', style=shape.triangleup, location=location.top, color=myRsiColorTek_1S, offset=0, size=size.tiny)
+plotshape(acRsiEma_2S and acRsiEma_2S and acREIsaretler_2S ? acRsiEma_2S : na  , title ='R/E 2 İşaret', text='', style=shape.triangleup, location=location.top, color=myRsiColorTek_2S, offset=0, size=size.small)
+plotshape(acRsiEma_3S and acRsiEma_3S and acREIsaretler_3S ? acRsiEma_3S : na  , title ='R/E 3 İşaret', text='', style=shape.triangleup, location=location.top, color=myRsiColorTek_3S, offset=0, size=size.normal)
+
+
+HepsiY = (myRsiColorTek_1S == myKoyuRenkY_1S or myRsiColorTek_1S == myAcikRenkY_1S) and (myRsiColorTek_2S == myKoyuRenkY_2S or myRsiColorTek_2S == myAcikRenkY_2S) and (myRsiColorTek_3S == myKoyuRenkY_3S or myRsiColorTek_3S == myAcikRenkY_3S)
+plotshape(HepsiY and acHepsiY ? HepsiY : na , title ='R/E Y İşaret', text='', style=shape.triangleup, location=location.top, color=color.new(color.lime, 0), offset=0, size=size.tiny)
+
+HepsiD = (myRsiColorTek_1S == myKoyuRenkD_1S or myRsiColorTek_1S == myAcikRenkD_1S) and (myRsiColorTek_2S == myKoyuRenkD_2S or myRsiColorTek_2S == myAcikRenkD_2S) and (myRsiColorTek_3S == myKoyuRenkD_3S or myRsiColorTek_3S == myAcikRenkD_3S)
+plotshape(HepsiD and acHepsiD ? HepsiD : na , title ='R/E D İşaret', text='', style=shape.triangledown, location=location.top, color=color.new(color.red, 0), offset=0, size=size.tiny)
+
+
+//BURADA BİTTİ
