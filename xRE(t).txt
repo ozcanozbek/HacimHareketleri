@@ -2,7 +2,7 @@
 // © ozcanozbek
 
 //@version=5
-indicator(title = 'xRE(t) V1.2.01' , shorttitle='xRE(t)', overlay=true, timeframe="", timeframe_gaps=true)
+indicator(title = 'xRE(t) V1.2.02' , shorttitle='xRE(t)', overlay=true, timeframe="", timeframe_gaps=true)
 //, timeframe="", timeframe_gaps=true
 
 xMumKontrol(xMumTip)=>
@@ -18,7 +18,6 @@ xMumKontrol(xMumTip)=>
         "1 Ay" => "M"
         => str.tostring(timeframe.period)
     
-
 
 
 // RSI/EMA Genel
@@ -171,17 +170,20 @@ plotshape(mf > ustCizgi and acBolgeIsaretleri ? mf > ustCizgi : na , title ='CMF
 plotshape(mf < altCizgi and acBolgeIsaretleri ? mf < altCizgi: na , title ='CMF Bölge İşaretleri', text='', style=shape.triangledown, location=location.top, color=color.new(color.red, 0), offset=0, size=size.tiny)
 
 ciftYukariIstah =  (myRsiColorTek_1S == myAcikRenkY_1S or myRsiColorTek_1S == myKoyuRenkY_1S) and mf > ustCizgi
-ciftAsagiIstah =  (myRsiColorTek_1S == myAcikRenkD_1S or myRsiColorTek_1S == myKoyuRenkD_1S) and mf < ustCizgi
+ciftAsagiIstah =  (myRsiColorTek_1S == myAcikRenkD_1S or myRsiColorTek_1S == myKoyuRenkD_1S) and mf < altCizgi
 
 ciftYukariIstahTek = (not (ciftYukariIstah[1]==true and mf[1] > ustCizgi[1] )) and ((myRsiColorTek_1S == myAcikRenkY_1S or myRsiColorTek_1S == myKoyuRenkY_1S) and mf > ustCizgi)
-ciftAsagiIstahTek =  (not (ciftAsagiIstah[1]==true and mf[1] < ustCizgi[1] )) and ((myRsiColorTek_1S == myAcikRenkD_1S or myRsiColorTek_1S == myKoyuRenkD_1S) and mf < ustCizgi)
+ciftAsagiIstahTek =  (not (ciftAsagiIstah[1]==true and mf[1] < ustCizgi[1] )) and ((myRsiColorTek_1S == myAcikRenkD_1S or myRsiColorTek_1S == myKoyuRenkD_1S) and mf < altCizgi)
 
 
 plotshape(ciftYukariIstah and acIstahIsaretleri ? ciftYukariIstah : na , title ='xRE ve İştah Yukarı İşaretleri', text='', style=shape.circle, location=location.top, color=color.new(color.lime, 0), offset=0, size=size.small)
 plotshape(ciftAsagiIstah and acIstahIsaretleri ? ciftAsagiIstah : na , title ='xRE ve İştah Aşağı  İşaretleri', text='', style=shape.circle, location=location.top, color=color.new(color.red, 0), offset=0, size=size.small)
 
+//plotshape(ciftYukariIstahTek and acIstahIsaretleri ? ciftYukariIstahTek : na , title ='xRE ve İştah Yukarı İşaretleri', text='', style=shape.circle, location=location.top, color=color.new(color.lime, 0), offset=0, size=size.small)
+//plotshape(ciftAsagiIstahTek and acIstahIsaretleri ? ciftAsagiIstahTek : na , title ='xRE ve İştah Aşağı  İşaretleri', text='', style=shape.circle, location=location.top, color=color.new(color.red, 0), offset=0, size=size.small)
+
+
 alertcondition(ciftYukariIstahTek, title="xReIstah Yukarı Trend Fırsatı", message='{{ticker}} xReIstah Yukarı Trend Fırsatı, FİYAT={{close}}')
 alertcondition(ciftAsagiIstahTek, title="xReIstah Düşen Trend Fırsatı", message='{{ticker}} xReIstah Düşen Trend Fırsatı, FİYAT={{close}}')
-
 
 //BURADA BİTTİ
