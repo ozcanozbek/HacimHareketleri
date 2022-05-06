@@ -83,6 +83,7 @@ myH_2S = request.security(syminfo.tickerid, xMumKontrol(xReMum2), high)
 myL_2S = request.security(syminfo.tickerid, xMumKontrol(xReMum2), low)
 
 
+
 acRsiEmaLW_2S = input.int(defval = 4, title = 'Rsi/Ema Çizgisi Kalınlığı Sayısal Değeri', group="Rsi/Ema 2 Değerleri") 
 acRsiEma_2S = input(defval = true, title = 'Rsi/Ema Çizgisi Gösterilsin mi?', group="Rsi/Ema 2 Değerleri") 
 acREIsaretler_2S = input(defval = false, title = 'Renk İşaretleri Gösterilsin mi?', group="Rsi/Ema 2 Değerleri") 
@@ -151,6 +152,7 @@ plotshape(HepsiD and acHepsiD ? HepsiD : na , title ='R/E D İşaret', text='', 
 
 acBolgeIsaretleri = input(defval = false, title = 'Bölge İşaretleri Gözüksün mü?', group="xCMF")   
 acIstahIsaretleri = input(defval = false, title = 'İştah İşaretleri Gözüksün mü?', group="xCMF")   
+acIstahIsaretleriSade = input(defval = false, title = 'İştah İşaretleri (SADE) Gözüksün mü?', group="xCMF")   
 
 
 var cmfVol = 0.
@@ -179,8 +181,8 @@ ciftAsagiIstahTek =  (not (ciftAsagiIstah[1]==true and mf[1] < ustCizgi[1] )) an
 plotshape(ciftYukariIstah and acIstahIsaretleri ? ciftYukariIstah : na , title ='xRE ve İştah Yukarı İşaretleri', text='', style=shape.circle, location=location.top, color=color.new(color.lime, 0), offset=0, size=size.small)
 plotshape(ciftAsagiIstah and acIstahIsaretleri ? ciftAsagiIstah : na , title ='xRE ve İştah Aşağı  İşaretleri', text='', style=shape.circle, location=location.top, color=color.new(color.red, 0), offset=0, size=size.small)
 
-//plotshape(ciftYukariIstahTek and acIstahIsaretleri ? ciftYukariIstahTek : na , title ='xRE ve İştah Yukarı İşaretleri', text='', style=shape.circle, location=location.top, color=color.new(color.lime, 0), offset=0, size=size.small)
-//plotshape(ciftAsagiIstahTek and acIstahIsaretleri ? ciftAsagiIstahTek : na , title ='xRE ve İştah Aşağı  İşaretleri', text='', style=shape.circle, location=location.top, color=color.new(color.red, 0), offset=0, size=size.small)
+plotshape(ciftYukariIstahTek and acIstahIsaretleriSade ? ciftYukariIstahTek : na , title ='xRE ve İştah Yukarı İşaretleri', text='', style=shape.circle, location=location.top, color=color.new(color.lime, 0), offset=0, size=size.small)
+plotshape(ciftAsagiIstahTek and acIstahIsaretleriSade ? ciftAsagiIstahTek : na , title ='xRE ve İştah Aşağı  İşaretleri', text='', style=shape.circle, location=location.top, color=color.new(color.red, 0), offset=0, size=size.small)
 
 
 alertcondition(ciftYukariIstahTek, title="xReIstah Yukarı Trend Fırsatı", message='{{ticker}} xReIstah Yukarı Trend Fırsatı, FİYAT={{close}}')
