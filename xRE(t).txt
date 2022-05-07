@@ -58,11 +58,11 @@ myRsiColorTek_1S = myRsi_1S >= myEma_1S ? myRsiColorY_1S : myRsiColorD_1S
 myRsiEmaLine_1S = myRsi_1S >= myEma_1S ? myH_1S : myL_1S
 
 rsiSartAl_1S = (myRsiColorTek_1S[1]==myKoyuRenkD_1S) and (myRsiColorTek_1S == myAcikRenkD_1S or myRsiColorTek_1S == myAcikRenkY_1S or myRsiColorTek_1S == myKoyuRenkY_1S) 
-plotshape(rsiSartAl_1S and acRsiEmaAl_1S and acRsiEma_1S,title ='R/E 1 DİP' , style=shape.triangleup, location=location.belowbar, color=color.new(#00bcd4, 0), offset=0, size=size.normal)
+plotshape(rsiSartAl_1S and acRsiEmaAl_1S,title ='R/E 1 DİP' , style=shape.triangleup, location=location.belowbar, color=color.new(#00bcd4, 0), offset=0, size=size.normal)
 //alertcondition(rsiSartAl_1S, title="R/E 1 DİP", message='{{ticker}} R/E 1 Kademeli DİP fırsatı olabilir, FİYAT={{close}}')
 
 rsiSartSat_1S = (myRsiColorTek_1S[1]==myKoyuRenkY_1S) and (myRsiColorTek_1S == myAcikRenkD_1S) 
-plotshape(rsiSartSat_1S and acRsiEmaSat_1S and acRsiEma_1S,title ='R/E 1 ZİRVE', style=shape.triangledown, location=location.abovebar, color=color.new(#00bcd4, 0), offset=0, size=size.normal)
+plotshape(rsiSartSat_1S and acRsiEmaSat_1S,title ='R/E 1 ZİRVE', style=shape.triangledown, location=location.abovebar, color=color.new(#00bcd4, 0), offset=0, size=size.normal)
 //alertcondition(rsiSartSat_1S, title="R/E 1 ZİRVE", message='{{ticker}} R/E 1 Kademeli ZİRVE fırsatı olabilir, FİYAT={{close}}')
 
 
@@ -87,6 +87,7 @@ myL_2S = request.security(syminfo.tickerid, xMumKontrol(xReMum2), low)
 acRsiEmaLW_2S = input.int(defval = 4, title = 'Rsi/Ema Çizgisi Kalınlığı Sayısal Değeri', group="Rsi/Ema 2 Değerleri") 
 acRsiEma_2S = input(defval = true, title = 'Rsi/Ema Çizgisi Gösterilsin mi?', group="Rsi/Ema 2 Değerleri") 
 acREIsaretler_2S = input(defval = false, title = 'Renk İşaretleri Gösterilsin mi?', group="Rsi/Ema 2 Değerleri") 
+
 
 myKoyuRenkY_2S = input.color(color.new(#00897B, 0)  , "Alım Bölgesinde (zirvede) Yükselirken", group="Rsi/Ema 2 Değerleri") 
 myAcikRenkY_2S = input.color(color.new(color.green, 0), "Satım Bölgesinden (dipte) Yükselirken", group="Rsi/Ema 2 Değerleri") 
@@ -115,6 +116,7 @@ acRsiEmaLW_3S = input.int(defval = 4, title = 'Rsi/Ema Çizgisi Kalınlığı Sa
 acRsiEma_3S = input(defval = true, title = 'Rsi/Ema Çizgisi Gösterilsin mi?', group="Rsi/Ema 3 Değerleri") 
 acREIsaretler_3S = input(defval = false, title = 'Renk İşaretleri Gösterilsin mi?', group="Rsi/Ema 3 Değerleri") 
 
+
 myKoyuRenkY_3S = input.color(color.new(#00897B, 0)  , "Alım Bölgesinde (zirvede) Yükselirken", group="Rsi/Ema 3 Değerleri") 
 myAcikRenkY_3S = input.color(color.new(color.green, 0), "Satım Bölgesinden (dipte) Yükselirken", group="Rsi/Ema 3 Değerleri") 
 
@@ -127,6 +129,7 @@ myRsiColorTek_3S = myRsi_3S >= myEma_3S ? myRsiColorY_3S : myRsiColorD_3S
 myRsiEmaLine_3S = myRsi_3S >= myEma_3S ? myH_3S : myL_3S
 
 
+
 /////
 
 myREcizgim_3S = plot(acRsiEma_3S ? myRsi_3S >= myEma_3S ? myH_3S : myL_3S : na, color=myRsiColorTek_3S, linewidth=acRsiEmaLW_3S, title='R/E 3 Cizgisi')
@@ -137,15 +140,17 @@ myREcizgim_1S = plot(acRsiEma_1S ? myRsi_1S >= myEma_1S ? myH_1S : myL_1S : na, 
 /////
 
 plotshape(acREIsaretler_1S , title ='R/E 1 İşaret', text='', style=shape.triangleup, location=location.bottom, color=myRsiColorTek_1S, offset=0, size=size.tiny)
-plotshape(acREIsaretler_2S , title ='R/E 2 İşaret', text='', style=shape.triangleup, location=location.bottom, color=myRsiColorTek_2S, offset=0, size=size.tiny)
+plotshape(acREIsaretler_2S , title ='R/E 2 İşaret', text='', style=shape.triangleup, location=location.top, color=myRsiColorTek_2S, offset=0, size=size.tiny)
 plotshape(acREIsaretler_3S, title ='R/E 3 İşaret', text='', style=shape.triangleup, location=location.bottom, color=myRsiColorTek_3S, offset=0, size=size.tiny)
 
 
-HepsiY = (myRsiColorTek_1S == myKoyuRenkY_1S or myRsiColorTek_1S == myAcikRenkY_1S) and (myRsiColorTek_2S == myKoyuRenkY_2S or myRsiColorTek_2S == myAcikRenkY_2S) and (myRsiColorTek_3S == myKoyuRenkY_3S or myRsiColorTek_3S == myAcikRenkY_3S)
-plotshape(HepsiY and acHepsiY ? HepsiY : na , title ='R/E Y İşaret', text='', style=shape.triangleup, location=location.top, color=color.new(color.lime, 0), offset=0, size=size.tiny)
+HepsiY = (myRsiColorTek_1S == myKoyuRenkY_1S) and (myRsiColorTek_2S == myKoyuRenkY_2S or myRsiColorTek_2S == myAcikRenkY_2S) and (myRsiColorTek_3S == myKoyuRenkY_3S or myRsiColorTek_3S == myAcikRenkY_3S)
+plotshape(HepsiY and acHepsiY ? HepsiY : na , title ='R/E Y İşaret', text='', style=shape.triangleup, location=location.top, color=color.new(#00897B, 0), offset=0, size=size.small)
+alertcondition(HepsiY, title="Hepsi Yüksek Fırsatı", message='{{ticker}} Hepsi Yüksek Fırsatı, FİYAT={{close}}')
 
-HepsiD = (myRsiColorTek_1S == myKoyuRenkD_1S or myRsiColorTek_1S == myAcikRenkD_1S) and (myRsiColorTek_2S == myKoyuRenkD_2S or myRsiColorTek_2S == myAcikRenkD_2S) and (myRsiColorTek_3S == myKoyuRenkD_3S or myRsiColorTek_3S == myAcikRenkD_3S)
-plotshape(HepsiD and acHepsiD ? HepsiD : na , title ='R/E D İşaret', text='', style=shape.triangledown, location=location.top, color=color.new(color.red, 0), offset=0, size=size.tiny)
+HepsiD = (myRsiColorTek_1S == myKoyuRenkD_1S) and (myRsiColorTek_2S == myKoyuRenkD_2S) and (myRsiColorTek_3S == myKoyuRenkD_3S or myRsiColorTek_3S == myAcikRenkD_3S)
+plotshape(HepsiD and acHepsiD ? HepsiD : na , title ='R/E D İşaret', text='', style=shape.triangledown, location=location.top, color=color.new(#880E4F, 0), offset=0, size=size.small)
+alertcondition(HepsiD, title="Hepsi Düşük Fırsatı", message='{{ticker}} Hepsi Düşük Fırsatı, FİYAT={{close}}')
 
 
 //CMF
@@ -165,7 +170,6 @@ mf = math.sum(ad, cmflength) / math.sum(volume, cmflength)
 
 //plot(mf and acBolgeDetayi ? mf : na, color=color.orange, title="MF",linewidth=3)
 
-
 ustCizgi = input.float(0.1, "Üst Değer", minval=-0.0, maxval=0.4, step=0.01, group="xCMF")
 altCizgi = input.float(-0.05, "Alt Değer", minval=-0.4, maxval=0.0, step=0.01, group="xCMF")
 plotshape(mf > ustCizgi and acBolgeIsaretleri ? mf > ustCizgi : na , title ='CMF Bölge İşaretleri', text='', style=shape.triangleup, location=location.top, color=color.new(color.lime, 0), offset=0, size=size.tiny)
@@ -176,6 +180,7 @@ ciftAsagiIstah =  (myRsiColorTek_1S == myAcikRenkD_1S or myRsiColorTek_1S == myK
 
 ciftYukariIstahTek = (not (ciftYukariIstah[1]==true and mf[1] > ustCizgi[1] )) and ((myRsiColorTek_1S == myAcikRenkY_1S or myRsiColorTek_1S == myKoyuRenkY_1S) and mf > ustCizgi)
 ciftAsagiIstahTek =  (not (ciftAsagiIstah[1]==true and mf[1] < ustCizgi[1] )) and ((myRsiColorTek_1S == myAcikRenkD_1S or myRsiColorTek_1S == myKoyuRenkD_1S) and mf < altCizgi)
+
 
 
 plotshape(ciftYukariIstah and acIstahIsaretleri ? ciftYukariIstah : na , title ='xRE ve İştah Yukarı İşaretleri', text='', style=shape.circle, location=location.top, color=color.new(color.lime, 0), offset=0, size=size.small)
