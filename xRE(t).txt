@@ -2,7 +2,7 @@
 // © ozcanozbek
 
 //@version=5
-indicator(title = 'xRE(t) V1.2.02' , shorttitle='xRE(t)', overlay=true, timeframe="", timeframe_gaps=true)
+indicator(title = 'xRE(t) V1.2.09' , shorttitle='xRE(t)', overlay=true, timeframe="", timeframe_gaps=true)
 //, timeframe="", timeframe_gaps=true
 
 xMumKontrol(xMumTip)=>
@@ -18,7 +18,6 @@ xMumKontrol(xMumTip)=>
         "1 Ay" => "M"
         => str.tostring(timeframe.period)
     
-
 
 // RSI/EMA Genel
 acHepsiY = input(defval = false, title = 'Hepsi Yükseliş Renk İşaretleri Gösterilsin mi?', group="Rsi/Ema Genel Değerleri") 
@@ -39,8 +38,8 @@ myH_1S = request.security(syminfo.tickerid, timeframe.period, high)
 myL_1S = request.security(syminfo.tickerid, timeframe.period, low)
 
 
-acRsiEmaLW_1S = input.int(defval = 4, title = 'Rsi/Ema Çizgisi Kalınlığı Sayısal Değeri', group="Rsi/Ema 1 Değerleri") 
-acRsiEma_1S = input(defval = true, title = 'Rsi/Ema Çizgisi Gösterilsin mi?', group="Rsi/Ema 1 Değerleri") 
+acRsiEmaLW_1S = input.int(defval = 3, title = 'Rsi/Ema Çizgisi Kalınlığı Sayısal Değeri', group="Rsi/Ema 1 Değerleri") 
+acRsiEma_1S = input(defval = false, title = 'Rsi/Ema Çizgisi Gösterilsin mi?', group="Rsi/Ema 1 Değerleri") 
 acREIsaretler_1S = input(defval = false, title = 'Renk İşaretleri Gösterilsin mi?', group="Rsi/Ema 1 Değerleri") 
 
 acRsiEmaAl_1S = input(defval = false, title = 'Kademeli DİP İşaretleri Gösterilsin mi?', group="Rsi/Ema 1 Değerleri") 
@@ -49,7 +48,7 @@ acRsiEmaSat_1S = input(defval = false, title = 'Kademeli ZİRVE İşaretleri Gö
 myKoyuRenkY_1S = input.color(color.new(#00897B, 0)  , "Alım Bölgesinde (zirvede) Yükselirken", group="Rsi/Ema 1 Değerleri") 
 myAcikRenkY_1S = input.color(color.new(color.green, 0), "Satım Bölgesinden (dipte) Yükselirken", group="Rsi/Ema 1 Değerleri") 
 
-myAcikRenkD_1S = input.color(color.new(color.red, 70) , "Alım Bölgesinden (zirvede) Düşerken", group="Rsi/Ema 1 Değerleri") 
+myAcikRenkD_1S = input.color(color.new(color.red, 0) , "Alım Bölgesinden (zirvede) Düşerken", group="Rsi/Ema 1 Değerleri") 
 myKoyuRenkD_1S = input.color(color.new(#880E4F, 0)  , "Satım Bölgesinde (dipte) Düşerken", group="Rsi/Ema 1 Değerleri") 
 
 myRsiColorY_1S = myRsi_1S <= 60 ? myAcikRenkY_1S : myKoyuRenkY_1S     
@@ -83,17 +82,16 @@ myH_2S = request.security(syminfo.tickerid, xMumKontrol(xReMum2), high)
 myL_2S = request.security(syminfo.tickerid, xMumKontrol(xReMum2), low)
 
 
-
-acRsiEmaLW_2S = input.int(defval = 4, title = 'Rsi/Ema Çizgisi Kalınlığı Sayısal Değeri', group="Rsi/Ema 2 Değerleri") 
-acRsiEma_2S = input(defval = true, title = 'Rsi/Ema Çizgisi Gösterilsin mi?', group="Rsi/Ema 2 Değerleri") 
-acREIsaretler_2S = input(defval = false, title = 'Renk İşaretleri Gösterilsin mi?', group="Rsi/Ema 2 Değerleri") 
+acRsiEmaLW_2S = input.int(defval = 5, title = 'Rsi/Ema Çizgisi Kalınlığı Sayısal Değeri', group="Rsi/Ema 2 Değerleri") 
+acRsiEma_2S = input(defval = false, title = 'Rsi/Ema Çizgisi Gösterilsin mi?', group="Rsi/Ema 2 Değerleri") 
+acREIsaretler_2S = input(defval = true, title = 'Renk İşaretleri Gösterilsin mi?', group="Rsi/Ema 2 Değerleri") 
 
 
 myKoyuRenkY_2S = input.color(color.new(#00897B, 0)  , "Alım Bölgesinde (zirvede) Yükselirken", group="Rsi/Ema 2 Değerleri") 
-myAcikRenkY_2S = input.color(color.new(color.green, 0), "Satım Bölgesinden (dipte) Yükselirken", group="Rsi/Ema 2 Değerleri") 
+myAcikRenkY_2S = input.color(color.new(color.green, 100), "Satım Bölgesinden (dipte) Yükselirken", group="Rsi/Ema 2 Değerleri") 
 
-myAcikRenkD_2S = input.color(color.new(color.red, 70) , "Alım Bölgesinden (zirvede) Düşerken", group="Rsi/Ema 2 Değerleri") 
-myKoyuRenkD_2S = input.color(color.new(#880E4F, 0)  , "Satım Bölgesinde (dipte) Düşerken", group="Rsi/Ema 2 Değerleri") 
+myAcikRenkD_2S = input.color(color.new(color.red, 100) , "Alım Bölgesinden (zirvede) Düşerken", group="Rsi/Ema 2 Değerleri") 
+myKoyuRenkD_2S = input.color(color.new(#880E4F, 100)  , "Satım Bölgesinde (dipte) Düşerken", group="Rsi/Ema 2 Değerleri") 
 
 myRsiColorY_2S = myRsi_2S <= 60 ? myAcikRenkY_2S : myKoyuRenkY_2S     
 myRsiColorD_2S = myRsi_2S <= 40 ? myKoyuRenkD_2S : myAcikRenkD_2S   
@@ -112,15 +110,15 @@ myH_3S = request.security(syminfo.tickerid, xMumKontrol(xReMum3), high)
 myL_3S = request.security(syminfo.tickerid, xMumKontrol(xReMum3), low)
 
 
-acRsiEmaLW_3S = input.int(defval = 4, title = 'Rsi/Ema Çizgisi Kalınlığı Sayısal Değeri', group="Rsi/Ema 3 Değerleri") 
-acRsiEma_3S = input(defval = true, title = 'Rsi/Ema Çizgisi Gösterilsin mi?', group="Rsi/Ema 3 Değerleri") 
-acREIsaretler_3S = input(defval = false, title = 'Renk İşaretleri Gösterilsin mi?', group="Rsi/Ema 3 Değerleri") 
+acRsiEmaLW_3S = input.int(defval = 7, title = 'Rsi/Ema Çizgisi Kalınlığı Sayısal Değeri', group="Rsi/Ema 3 Değerleri") 
+acRsiEma_3S = input(defval = false, title = 'Rsi/Ema Çizgisi Gösterilsin mi?', group="Rsi/Ema 3 Değerleri") 
+acREIsaretler_3S = input(defval = true, title = 'Renk İşaretleri Gösterilsin mi?', group="Rsi/Ema 3 Değerleri") 
 
 
-myKoyuRenkY_3S = input.color(color.new(#00897B, 0)  , "Alım Bölgesinde (zirvede) Yükselirken", group="Rsi/Ema 3 Değerleri") 
-myAcikRenkY_3S = input.color(color.new(color.green, 0), "Satım Bölgesinden (dipte) Yükselirken", group="Rsi/Ema 3 Değerleri") 
+myKoyuRenkY_3S = input.color(color.new(#00897B, 100)  , "Alım Bölgesinde (zirvede) Yükselirken", group="Rsi/Ema 3 Değerleri") 
+myAcikRenkY_3S = input.color(color.new(color.green, 100), "Satım Bölgesinden (dipte) Yükselirken", group="Rsi/Ema 3 Değerleri") 
 
-myAcikRenkD_3S = input.color(color.new(color.red, 70) , "Alım Bölgesinden (zirvede) Düşerken", group="Rsi/Ema 3 Değerleri") 
+myAcikRenkD_3S = input.color(color.new(color.red, 100) , "Alım Bölgesinden (zirvede) Düşerken", group="Rsi/Ema 3 Değerleri") 
 myKoyuRenkD_3S = input.color(color.new(#880E4F, 0)  , "Satım Bölgesinde (dipte) Düşerken", group="Rsi/Ema 3 Değerleri") 
 
 myRsiColorY_3S = myRsi_3S <= 60 ? myAcikRenkY_3S : myKoyuRenkY_3S     
@@ -156,7 +154,7 @@ alertcondition(HepsiD, title="Hepsi Düşük Fırsatı", message='{{ticker}} Hep
 //CMF
 
 acBolgeIsaretleri = input(defval = false, title = 'Bölge İşaretleri Gözüksün mü?', group="xCMF")   
-acIstahIsaretleri = input(defval = false, title = 'İştah İşaretleri Gözüksün mü?', group="xCMF")   
+acIstahIsaretleri = input(defval = true, title = 'İştah İşaretleri Gözüksün mü?', group="xCMF")   
 acIstahIsaretleriSade = input(defval = false, title = 'İştah İşaretleri (SADE) Gözüksün mü?', group="xCMF")   
 
 
